@@ -8,10 +8,9 @@ namespace CheckInput
 {
     class Information
     {
-        // '+', '/', '*', ')', '(', '\"', '\'', '\\', '&', '^', '$', '#', '!', '?', '>', '<', ':', ';', ']', '[', ',', '~', '`', '/', '|'
         protected string input;
         protected Information next;
-        public changed 
+        public bool changed;
 
         public Information()
         {
@@ -31,9 +30,10 @@ namespace CheckInput
             else next = n;
         }
 
-        public virtual void Handle(string i, int id)
+        public virtual string Handle(int id)
         {
-            next.Handle(i, id);
+            next.Handle(id);
+            return input;
         }
 
         public bool CheckSpecials(string str)
@@ -61,117 +61,133 @@ namespace CheckInput
 
     class HandleLogin: Information
     {
-        public override void Handle(string i, int id)
+        public override string Handle(int id)
         {
             if (id == 1)
             {
-                if (CheckSpecials(i)) Console.WriteLine("Login successfully changed");
-                else
+                changed = false;
+                do
                 {
-                    Console.WriteLine("Wrong login format.");
-                }
+                    Console.Write("Input login: ");
+                    input = Console.ReadLine();
+                    if (CheckSpecials(input)) changed = true;
+                } while (!changed);
             }
-            else
-            {
-                next.Handle(i, id);
-            }
+            else input = next.Handle(id);
+            return input;
+
         }
     }
 
     class HandlePassword: Information
     {
-        public override void Handle(string i, int id)
+        public override string Handle(int id)
         {
             if (id == 2)
             {
-                if (CheckSpecials(i)) Console.WriteLine("Password successfully changed");
-                else
+                changed = false;
+                do
                 {
-                    Console.WriteLine("Wrong password format.");
-                }
+                    Console.Write("Input password: ");
+                    input = Console.ReadLine();
+                    if (CheckSpecials(input)) changed = true;
+                } while (!changed);
             }
-            else
-            {
-                next.Handle(i, id);
-            }
+            else input = next.Handle(id);
+            return input;
+
         }
     }
 
     class HandleEmail: Information
     {
-        public override void Handle(string i, int id)
+        public override string Handle(int id)
         {
             if (id == 3)
             {
-                if (CheckSpecials(i)) Console.WriteLine("Email successfully changed");
-                else
+                changed = false;
+                do
                 {
-                    Console.WriteLine("Wrong email format.");
-                }
+                    Console.Write("Input email: ");
+                    input = Console.ReadLine();
+                    if (CheckSpecials(input)) changed = true;
+                } while (!changed);
             }
-            else
-            {
-                next.Handle(i, id);
-            }
+            else input = next.Handle(id);
+            return input;
+
         }
     }
 
     class HandleNumber : Information
     {
-        public override void Handle(string i, int id)
+        public override string Handle(int id)
         {
             if (id == 4)
             {
-                if (CheckDigits(i)) Console.WriteLine("Number successfully changed") ;
-                else
+                changed = false;
+                do
                 {
-                    Console.WriteLine("Wrong number format.");
-                }
+                    Console.Write("Input number: ");
+                    input = Console.ReadLine();
+                    if (CheckDigits(input)) changed = true;
+                } while (!changed);
             }
-            else
-            {
-                next.Handle(i, id);
-            }
+            else input = next.Handle(id);
+            return input;
+
         }
     }
 
     class HandleName : Information
     {
-        public override void Handle(string i, int id)
+        public override string Handle(int id)
         {
             if (id == 5)
             {
-                if (CheckSpecials(i)) Console.WriteLine("Name successfully changed");
-                else
+                changed = false;
+                do
                 {
-                    Console.WriteLine("Wrong name format.");
-                    
-                }
+                    Console.Write("Input name: ");
+                    input = Console.ReadLine();
+                    if (CheckSpecials(input)) changed = true;
+                } while (!changed);
             }
-            else
-            {
-                next.Handle(i, id);
-                
-            }
+            else input = next.Handle(id);
+            return input;
+
         }
     }
 
     class HandleBirth : Information
     {
-        public override void Handle(string i, int id)
+        private bool CheckBirth(string i)
+        {
+            int counter = 0;
+            foreach (char c in i)
+            {
+                if (c == '.') counter++;
+            }
+            if (counter == 2 && i.Length == 10) return true;
+            else return false;
+        }
+
+        public override string Handle(int id)
+
         {
             if (id == 6)
             {
-                if (CheckSpecials(i)) Console.WriteLine("Date of birth successfully changed");
-                else
+                changed = false;
+                do
                 {
-                    Console.WriteLine("Wrong birth format.");
-                }
+                    Console.Write("Input birth: ");
+                    input = Console.ReadLine();
+                    if (CheckBirth(input)) changed = true;
+                } while (!changed);
             }
-            else
-            {
-                next.Handle(i, id);
-            }
+            else input = next.Handle(id);
+            return input;
+
         }
     }
     
@@ -252,54 +268,28 @@ namespace CheckInput
         {
             bool f;
             string str;
-            do
-            {
-                Console.Write("Enter login: ");
-                str = Console.ReadLine();
-                login.Handle(str, 1);
-            } while ();
+
+            str = login.Handle(1);
             acc.Login = str;
-
-            do
-            {
-                Console.Write("Enter password: ");
-                str = Console.ReadLine();
-                login.Handle(str, 2);
-            } while (!f);
+            str = "";
+            str = login.Handle(2);
             acc.Password = str;
+            str = "";
 
-            do
-            {
-                Console.Write("Enter email: ");
-                str = Console.ReadLine();
-                login.Handle(str, 3);
-            } while (!f);
+            str = login.Handle(3);
             acc.Email = str;
+            str = "";
 
-            do
-            {
-                Console.Write("Enter number: ");
-                str = Console.ReadLine();
-                login.Handle(str, 4);
-            } while (!f);
-            acc.Number = str;
+            str = login.Handle(4);
+            acc.Number= str;
+            str = "";
 
-            do
-            {
-                Console.Write("Enter name: ");
-                str = Console.ReadLine();
-                login.Handle(str, 5);
-            } while (!f);
-            acc.Name = str;
+            str = login.Handle(5);
+            acc.Name= str;
+            str = "";
 
-            do
-            {
-                Console.Write("Enter date of birth: ");
-                str = Console.ReadLine();
-                login.Handle(str, 6);
-            } while (!f);
+            str = login.Handle(6);
             acc.Birth = str;
-
         }
     }
 }
